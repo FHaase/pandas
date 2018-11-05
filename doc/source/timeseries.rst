@@ -7,15 +7,14 @@
    from datetime import datetime, timedelta, time
    import numpy as np
    import pandas as pd
-   from pandas import offsets
-   np.random.seed(123456)
-   randn = np.random.randn
-   randint = np.random.randint
-   np.set_printoptions(precision=4, suppress=True)
-   pd.options.display.max_rows=15
+
    import dateutil
    import pytz
    from dateutil.relativedelta import relativedelta
+
+   np.random.seed(123456)
+   np.set_printoptions(precision=4, suppress=True)
+   pd.options.display.max_rows = 15
 
 ********************************
 Time Series / Date functionality
@@ -32,7 +31,8 @@ Parsing time series information from various sources and formats
 
 .. ipython:: python
 
-   dti = pd.to_datetime(['1/1/2018', np.datetime64('2018-01-01'), datetime(2018, 1, 1)])
+   dti = pd.to_datetime(['1/1/2018', np.datetime64('2018-01-01'),
+                         datetime(2018, 1, 1)])
    dti
 
 Generate sequences of fixed-frequency dates and time spans
@@ -163,7 +163,9 @@ and :class:`PeriodIndex` respectively.
 
 .. ipython:: python
 
-   dates = [pd.Timestamp('2012-05-01'), pd.Timestamp('2012-05-02'), pd.Timestamp('2012-05-03')]
+   dates = [pd.Timestamp('2012-05-01'),
+            pd.Timestamp('2012-05-02'),
+            pd.Timestamp('2012-05-03')]
    ts = pd.Series(np.random.randn(3), dates)
 
    type(ts.index)
@@ -327,7 +329,7 @@ which can be specified. These are computed from the starting point specified by 
                    1349979305, 1350065705], unit='s')
 
    pd.to_datetime([1349720105100, 1349720105200, 1349720105300,
-                   1349720105400, 1349720105500 ], unit='ms')
+                   1349720105400, 1349720105500], unit='ms')
 
 .. note::
 
@@ -583,9 +585,8 @@ would include matching times on an included date:
 
 .. ipython:: python
 
-   dft = pd.DataFrame(randn(100000,1),
-                      columns=['A'],
-                      index=pd.date_range('20130101',periods=100000,freq='T'))
+   dft = pd.DataFrame(np.random.randn(100000, 1), columns=['A'],
+                      index=pd.date_range('20130101', periods=100000, freq='T'))
    dft
    dft['2013']
 
@@ -622,10 +623,9 @@ We are stopping on the included end-point as it is part of the index:
 
    dft2 = pd.DataFrame(np.random.randn(20, 1),
                        columns=['A'],
-                       index=pd.MultiIndex.from_product([pd.date_range('20130101',
-                                                                       periods=10,
-                                                                       freq='12H'),
-                                                        ['a', 'b']]))
+                       index=pd.MultiIndex.from_product(
+                           [pd.date_range('20130101', periods=10, freq='12H'),
+                            ['a', 'b']]))
    dft2
    dft2.loc['2013-01-05']
    idx = pd.IndexSlice
@@ -681,7 +681,7 @@ If the timestamp string is treated as a slice, it can be used to index ``DataFra
 .. ipython:: python
 
     dft_minute = pd.DataFrame({'a': [1, 2, 3], 'b': [4, 5, 6]},
-                               index=series_minute.index)
+                              index=series_minute.index)
     dft_minute['2011-12-31 23']
 
 
@@ -693,18 +693,16 @@ If the timestamp string is treated as a slice, it can be used to index ``DataFra
 
    .. ipython:: python
 
-     dft_minute.loc['2011-12-31 23:59']
+      dft_minute.loc['2011-12-31 23:59']
 
 Note also that ``DatetimeIndex`` resolution cannot be less precise than day.
 
 .. ipython:: python
 
     series_monthly = pd.Series([1, 2, 3],
-                              pd.DatetimeIndex(['2011-12',
-                                                '2012-01',
-                                                '2012-02']))
+                               pd.DatetimeIndex(['2011-12', '2012-01', '2012-02']))
     series_monthly.index.resolution
-    series_monthly['2011-12'] # returns Series
+    series_monthly['2011-12']  # returns Series
 
 
 Exact Indexing
@@ -716,7 +714,7 @@ These ``Timestamp`` and ``datetime`` objects have exact ``hours, minutes,`` and 
 
 .. ipython:: python
 
-   dft[datetime(2013, 1, 1):datetime(2013,2,28)]
+   dft[datetime(2013, 1, 1):datetime(2013, 2, 28)]
 
 With no defaults.
 
@@ -879,8 +877,7 @@ We could have done the same thing with ``DateOffset``:
 
 .. ipython:: python
 
-   from pandas.tseries.offsets import *
-   d + DateOffset(months=4, days=5)
+   d + pd.offsets.DateOffset(months=4, days=5)
 
 The key features of a ``DateOffset`` object are:
 
@@ -904,15 +901,15 @@ custom date increment logic, such as adding business days:
 
 .. ipython:: python
 
-   d - 5 * BDay()
-   d + BMonthEnd()
+   d - 5 * pd.offsets.BDay()
+   d + pd.offsets.BMonthEnd()
 
 The ``rollforward`` and ``rollback`` methods do exactly what you would expect:
 
 .. ipython:: python
 
    d
-   offset = BMonthEnd()
+   offset = pd.offsets.BMonthEnd()
    offset.rollforward(d)
    offset.rollback(d)
 
@@ -927,12 +924,12 @@ time information included in the operation.
 .. ipython:: python
 
    ts = pd.Timestamp('2014-01-01 09:00')
-   day = Day()
+   day = pd.offsets.Day()
    day.apply(ts)
    day.apply(ts).normalize()
 
    ts = pd.Timestamp('2014-01-01 22:00')
-   hour = Hour()
+   hour = pd.offsets.Hour()
    hour.apply(ts)
    hour.apply(ts).normalize()
    hour.apply(pd.Timestamp("2014-01-01 23:30")).normalize()
@@ -969,26 +966,26 @@ particular day of the week:
 .. ipython:: python
 
    d
-   d + Week()
-   d + Week(weekday=4)
-   (d + Week(weekday=4)).weekday()
+   d + pd.offsets.Week()
+   d + pd.offsets.Week(weekday=4)
+   (d + pd.offsets.Week(weekday=4)).weekday()
 
-   d - Week()
+   d - pd.offsets.Week()
 
 The ``normalize`` option will be effective for addition and subtraction.
 
 .. ipython:: python
 
-   d + Week(normalize=True)
-   d - Week(normalize=True)
+   d + pd.offsets.Week(normalize=True)
+   d - pd.offsets.Week(normalize=True)
 
 
 Another example is parameterizing ``YearEnd`` with the specific ending month:
 
 .. ipython:: python
 
-   d + YearEnd()
-   d + YearEnd(month=6)
+   d + pd.offsets.YearEnd()
+   d + pd.offsets.YearEnd(month=6)
 
 
 .. _timeseries.offsetseries:
@@ -1004,9 +1001,9 @@ apply the offset to each element.
    rng = pd.date_range('2012-01-01', '2012-01-03')
    s = pd.Series(rng)
    rng
-   rng + DateOffset(months=2)
-   s + DateOffset(months=2)
-   s - DateOffset(months=2)
+   rng + pd.offsets.DateOffset(months=2)
+   s + pd.offsets.DateOffset(months=2)
+   s - pd.offsets.DateOffset(months=2)
 
 If the offset class maps directly to a ``Timedelta`` (``Day``, ``Hour``,
 ``Minute``, ``Second``, ``Micro``, ``Milli``, ``Nano``) it can be
@@ -1015,10 +1012,10 @@ used exactly like a ``Timedelta`` - see the
 
 .. ipython:: python
 
-   s - Day(2)
+   s - pd.offsets.Day(2)
    td = s - pd.Series(pd.date_range('2011-12-29', '2011-12-31'))
    td
-   td + Minute(15)
+   td + pd.offsets.Minute(15)
 
 Note that some offsets (such as ``BQuarterEnd``) do not have a
 vectorized implementation.  They can still be used but may
@@ -1027,7 +1024,7 @@ calculate significantly slower and will show a ``PerformanceWarning``
 .. ipython:: python
    :okwarning:
 
-   rng + BQuarterEnd()
+   rng + pd.offsets.BQuarterEnd()
 
 
 .. _timeseries.custombusinessdays:
@@ -1043,14 +1040,14 @@ As an interesting example, let's look at Egypt where a Friday-Saturday weekend i
 
 .. ipython:: python
 
-    from pandas.tseries.offsets import CustomBusinessDay
     weekmask_egypt = 'Sun Mon Tue Wed Thu'
 
     # They also observe International Workers' Day so let's
     # add that for a couple of years
 
     holidays = ['2012-05-01', datetime(2013, 5, 1), np.datetime64('2014-05-01')]
-    bday_egypt = CustomBusinessDay(holidays=holidays, weekmask=weekmask_egypt)
+    bday_egypt = pd.offsets.CustomBusinessDay(holidays=holidays,
+                                              weekmask=weekmask_egypt)
     dt = datetime(2013, 4, 30)
     dt + 2 * bday_egypt
 
@@ -1060,7 +1057,8 @@ Let's map to the weekday names:
 
     dts = pd.date_range(dt, periods=5, freq=bday_egypt)
 
-    pd.Series(dts.weekday, dts).map(pd.Series('Mon Tue Wed Thu Fri Sat Sun'.split()))
+    pd.Series(dts.weekday, dts).map(
+        pd.Series('Mon Tue Wed Thu Fri Sat Sun'.split()))
 
 Holiday calendars can be used to provide the list of holidays.  See the
 :ref:`holiday calendar<timeseries.holiday>` section for more information.
@@ -1069,7 +1067,7 @@ Holiday calendars can be used to provide the list of holidays.  See the
 
     from pandas.tseries.holiday import USFederalHolidayCalendar
 
-    bday_us = CustomBusinessDay(calendar=USFederalHolidayCalendar())
+    bday_us = pd.offsets.CustomBusinessDay(calendar=USFederalHolidayCalendar())
 
     # Friday before MLK Day
     dt = datetime(2014, 1, 17)
@@ -1082,15 +1080,15 @@ in the usual way.
 
 .. ipython:: python
 
-    from pandas.tseries.offsets import CustomBusinessMonthBegin
-    bmth_us = CustomBusinessMonthBegin(calendar=USFederalHolidayCalendar())
+    bmth_us = pd.offsets.CustomBusinessMonthBegin(
+        calendar=USFederalHolidayCalendar())
 
     # Skip new years
     dt = datetime(2013, 12, 17)
     dt + bmth_us
 
     # Define date index with custom offset
-    pd.DatetimeIndex(start='20100101',end='20120101',freq=bmth_us)
+    pd.DatetimeIndex(start='20100101', end='20120101', freq=bmth_us)
 
 .. note::
 
@@ -1117,7 +1115,7 @@ hours are added to the next business day.
 
 .. ipython:: python
 
-    bh = BusinessHour()
+    bh = pd.offsets.BusinessHour()
     bh
 
     # 2014-08-01 is Friday
@@ -1134,10 +1132,10 @@ hours are added to the next business day.
     pd.Timestamp('2014-08-01 16:30') + bh
 
     # Adding 2 business hours
-    pd.Timestamp('2014-08-01 10:00') + BusinessHour(2)
+    pd.Timestamp('2014-08-01 10:00') + pd.offsets.BusinessHour(2)
 
     # Subtracting 3 business hours
-    pd.Timestamp('2014-08-01 10:00') + BusinessHour(-3)
+    pd.Timestamp('2014-08-01 10:00') + pd.offsets.BusinessHour(-3)
 
 You can also specify ``start`` and ``end`` time by keywords. The argument must 
 be a ``str`` with an ``hour:minute`` representation or a ``datetime.time`` 
@@ -1146,7 +1144,7 @@ results in ``ValueError``.
 
 .. ipython:: python
 
-    bh = BusinessHour(start='11:00', end=time(20, 0))
+    bh = pd.offsets.BusinessHour(start='11:00', end=time(20, 0))
     bh
 
     pd.Timestamp('2014-08-01 13:00') + bh
@@ -1159,7 +1157,7 @@ Valid business hours are distinguished by whether it started from valid ``Busine
 
 .. ipython:: python
 
-    bh = BusinessHour(start='17:00', end='09:00')
+    bh = pd.offsets.BusinessHour(start='17:00', end='09:00')
     bh
 
     pd.Timestamp('2014-08-01 17:00') + bh
@@ -1184,19 +1182,19 @@ under the default business hours (9:00 - 17:00), there is no gap (0 minutes) bet
 .. ipython:: python
 
     # This adjusts a Timestamp to business hour edge
-    BusinessHour().rollback(pd.Timestamp('2014-08-02 15:00'))
-    BusinessHour().rollforward(pd.Timestamp('2014-08-02 15:00'))
+    pd.offsets.BusinessHour().rollback(pd.Timestamp('2014-08-02 15:00'))
+    pd.offsets.BusinessHour().rollforward(pd.Timestamp('2014-08-02 15:00'))
 
     # It is the same as BusinessHour().apply(pd.Timestamp('2014-08-01 17:00')).
     # And it is the same as BusinessHour().apply(pd.Timestamp('2014-08-04 09:00'))
-    BusinessHour().apply(pd.Timestamp('2014-08-02 15:00'))
+    pd.offsets.BusinessHour().apply(pd.Timestamp('2014-08-02 15:00'))
 
     # BusinessDay results (for reference)
-    BusinessHour().rollforward(pd.Timestamp('2014-08-02'))
+    pd.offsets.BusinessHour().rollforward(pd.Timestamp('2014-08-02'))
 
     # It is the same as BusinessDay().apply(pd.Timestamp('2014-08-01'))
     # The result is the same as rollworward because BusinessDay never overlap.
-    BusinessHour().apply(pd.Timestamp('2014-08-02'))
+    pd.offsets.BusinessHour().apply(pd.Timestamp('2014-08-02'))
 
 ``BusinessHour`` regards Saturday and Sunday as holidays. To use arbitrary 
 holidays, you can use ``CustomBusinessHour`` offset, as explained in the 
@@ -1216,7 +1214,7 @@ as ``BusinessHour`` except that it skips specified custom holidays.
 .. ipython:: python
 
     from pandas.tseries.holiday import USFederalHolidayCalendar
-    bhour_us = CustomBusinessHour(calendar=USFederalHolidayCalendar())
+    bhour_us = pd.offsets.CustomBusinessHour(calendar=USFederalHolidayCalendar())
     # Friday before MLK Day
     dt = datetime(2014, 1, 17, 15)
 
@@ -1229,7 +1227,8 @@ You can use keyword arguments supported by either ``BusinessHour`` and ``CustomB
 
 .. ipython:: python
 
-    bhour_mon = CustomBusinessHour(start='10:00', weekmask='Tue Wed Thu Fri')
+    bhour_mon = pd.offsets.CustomBusinessHour(start='10:00',
+                                              weekmask='Tue Wed Thu Fri')
 
     # Monday is skipped because it's a holiday, business hour starts from 10:00
     dt + bhour_mon * 2
@@ -1285,7 +1284,7 @@ most functions:
 
    pd.date_range(start, periods=5, freq='B')
 
-   pd.date_range(start, periods=5, freq=BDay())
+   pd.date_range(start, periods=5, freq=pd.offsets.BDay())
 
 You can combine together day and intraday offsets:
 
@@ -1352,39 +1351,39 @@ anchor point, and moved ``|n|-1`` additional steps forwards or backwards.
 
 .. ipython:: python
 
-   pd.Timestamp('2014-01-02') + MonthBegin(n=1)
-   pd.Timestamp('2014-01-02') + MonthEnd(n=1)
+   pd.Timestamp('2014-01-02') + pd.offsets.MonthBegin(n=1)
+   pd.Timestamp('2014-01-02') + pd.offsets.MonthEnd(n=1)
 
-   pd.Timestamp('2014-01-02') - MonthBegin(n=1)
-   pd.Timestamp('2014-01-02') - MonthEnd(n=1)
+   pd.Timestamp('2014-01-02') - pd.offsets.MonthBegin(n=1)
+   pd.Timestamp('2014-01-02') - pd.offsets.MonthEnd(n=1)
 
-   pd.Timestamp('2014-01-02') + MonthBegin(n=4)
-   pd.Timestamp('2014-01-02') - MonthBegin(n=4)
+   pd.Timestamp('2014-01-02') + pd.offsets.MonthBegin(n=4)
+   pd.Timestamp('2014-01-02') - pd.offsets.MonthBegin(n=4)
 
 If the given date *is* on an anchor point, it is moved ``|n|`` points forwards
 or backwards.
 
 .. ipython:: python
 
-   pd.Timestamp('2014-01-01') + MonthBegin(n=1)
-   pd.Timestamp('2014-01-31') + MonthEnd(n=1)
+   pd.Timestamp('2014-01-01') + pd.offsets.MonthBegin(n=1)
+   pd.Timestamp('2014-01-31') + pd.offsets.MonthEnd(n=1)
 
-   pd.Timestamp('2014-01-01') - MonthBegin(n=1)
-   pd.Timestamp('2014-01-31') - MonthEnd(n=1)
+   pd.Timestamp('2014-01-01') - pd.offsets.MonthBegin(n=1)
+   pd.Timestamp('2014-01-31') - pd.offsets.MonthEnd(n=1)
 
-   pd.Timestamp('2014-01-01') + MonthBegin(n=4)
-   pd.Timestamp('2014-01-31') - MonthBegin(n=4)
+   pd.Timestamp('2014-01-01') + pd.offsets.MonthBegin(n=4)
+   pd.Timestamp('2014-01-31') - pd.offsets.MonthBegin(n=4)
 
 For the case when ``n=0``, the date is not moved if on an anchor point, otherwise
 it is rolled forward to the next anchor point.
 
 .. ipython:: python
 
-   pd.Timestamp('2014-01-02') + MonthBegin(n=0)
-   pd.Timestamp('2014-01-02') + MonthEnd(n=0)
+   pd.Timestamp('2014-01-02') + pd.offsets.MonthBegin(n=0)
+   pd.Timestamp('2014-01-02') + pd.offsets.MonthEnd(n=0)
 
-   pd.Timestamp('2014-01-01') + MonthBegin(n=0)
-   pd.Timestamp('2014-01-31') + MonthEnd(n=0)
+   pd.Timestamp('2014-01-01') + pd.offsets.MonthBegin(n=0)
+   pd.Timestamp('2014-01-31') + pd.offsets.MonthEnd(n=0)
 
 .. _timeseries.holiday:
 
@@ -1422,15 +1421,19 @@ An example of how holidays and holiday calendars are defined:
 
     from pandas.tseries.holiday import Holiday, USMemorialDay,\
         AbstractHolidayCalendar, nearest_workday, MO
+
     class ExampleCalendar(AbstractHolidayCalendar):
         rules = [
             USMemorialDay,
             Holiday('July 4th', month=7, day=4, observance=nearest_workday),
             Holiday('Columbus Day', month=10, day=1,
-                offset=DateOffset(weekday=MO(2))), #same as 2*Week(weekday=2)
-            ]
+                    offset=pd.offsets.DateOffset(weekday=MO(2)))]
+
     cal = ExampleCalendar()
     cal.holidays(datetime(2012, 1, 1), datetime(2012, 12, 31))
+
+:hint:
+   **weekday=MO(2)** is same as **2 * Week(weekday=2)**
 
 Using this calendar, creating an index or doing offset arithmetic skips weekends
 and holidays (i.e., Memorial Day/July 4th).  For example, the below defines
@@ -1440,10 +1443,9 @@ or ``Timestamp`` objects.
 
 .. ipython:: python
 
-    from pandas.tseries.offsets import CDay
     pd.DatetimeIndex(start='7/1/2012', end='7/10/2012',
-        freq=CDay(calendar=cal)).to_pydatetime()
-    offset = CustomBusinessDay(calendar=cal)
+                     freq=pd.offsets.CDay(calendar=cal)).to_pydatetime()
+    offset = pd.offsets.CustomBusinessDay(calendar=cal)
     datetime(2012, 5, 25) + offset
     datetime(2012, 7, 3) + offset
     datetime(2012, 7, 3) + 2 * offset
@@ -1505,7 +1507,7 @@ The ``shift`` method accepts an ``freq`` argument which can accept a
 
 .. ipython:: python
 
-   ts.shift(5, freq=offsets.BDay())
+   ts.shift(5, freq=pd.offsets.BDay())
    ts.shift(5, freq='BM')
 
 Rather than changing the alignment of the data and the index, ``DataFrame`` and
@@ -1529,17 +1531,17 @@ calls ``reindex``.
 
 .. ipython:: python
 
-   dr = pd.date_range('1/1/2010', periods=3, freq=3 * offsets.BDay())
-   ts = pd.Series(randn(3), index=dr)
+   dr = pd.date_range('1/1/2010', periods=3, freq=3 * pd.offsets.BDay())
+   ts = pd.Series(np.random.randn(3), index=dr)
    ts
-   ts.asfreq(BDay())
+   ts.asfreq(pd.offsets.BDay())
 
 ``asfreq`` provides a further convenience so you can specify an interpolation
 method for any gaps that may appear after the frequency conversion.
 
 .. ipython:: python
 
-   ts.asfreq(BDay(), method='pad')
+   ts.asfreq(pd.offsets.BDay(), method='pad')
 
 Filling Forward / Backward
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1624,7 +1626,7 @@ labels.
 
 .. ipython:: python
 
-   ts.resample('5Min').mean() # by default label='left'
+   ts.resample('5Min').mean()  # by default label='left'
 
    ts.resample('5Min', label='left').mean()
 
@@ -1703,15 +1705,12 @@ We can instead only resample those groups where we have points as follows:
 
 .. ipython:: python
 
-    from functools import partial
-    from pandas.tseries.frequencies import to_offset
-
     def round(t, freq):
         # round a Timestamp to a specified freq
-        freq = to_offset(freq)
+        freq = pd.tseries.frequencies.to_offset(freq)
         return pd.Timestamp((t.value // freq.delta.value) * freq.delta.value)
 
-    ts.groupby(partial(round, freq='3T')).sum()
+    ts.groupby(functools.partial(round, freq='3T')).sum()
 
 .. _timeseries.aggregate:
 
@@ -1737,7 +1736,7 @@ We can select a specific column or columns using standard getitem.
 
    r['A'].mean()
 
-   r[['A','B']].mean()
+   r[['A', 'B']].mean()
 
 You can pass a list or dict of functions to do aggregation with, outputting a ``DataFrame``:
 
@@ -1758,21 +1757,21 @@ columns of a ``DataFrame``:
 .. ipython:: python
    :okexcept:
 
-   r.agg({'A' : np.sum,
-          'B' : lambda x: np.std(x, ddof=1)})
+   r.agg({'A': np.sum,
+          'B': lambda x: np.std(x, ddof=1)})
 
 The function names can also be strings. In order for a string to be valid it
 must be implemented on the resampled object:
 
 .. ipython:: python
 
-   r.agg({'A' : 'sum', 'B' : 'std'})
+   r.agg({'A': 'sum', 'B': 'std'})
 
 Furthermore, you can also specify multiple aggregation functions for each column separately.
 
 .. ipython:: python
 
-   r.agg({'A' : ['sum','std'], 'B' : ['mean','std'] })
+   r.agg({'A': ['sum', 'std'], 'B': ['mean', 'std']})
 
 
 If a ``DataFrame`` does not have a datetimelike index, but instead you want
@@ -1784,9 +1783,9 @@ to resample based on datetimelike column in the frame, it can passed to the
    df = pd.DataFrame({'date': pd.date_range('2015-01-01', freq='W', periods=5),
                       'a': np.arange(5)},
                      index=pd.MultiIndex.from_arrays([
-                              [1,2,3,4,5],
-                              pd.date_range('2015-01-01', freq='W', periods=5)],
-                          names=['v','d']))
+                         [1, 2, 3, 4, 5],
+                         pd.date_range('2015-01-01', freq='W', periods=5)],
+                         names=['v', 'd']))
    df
    df.resample('M', on='date').sum()
 
@@ -1845,13 +1844,13 @@ If ``Period`` freq is daily or higher (``D``, ``H``, ``T``, ``S``, ``L``, ``U``,
 .. ipython:: python
 
    p = pd.Period('2014-07-01 09:00', freq='H')
-   p + Hour(2)
+   p + pd.offsets.Hour(2)
    p + timedelta(minutes=120)
    p + np.timedelta64(7200, 's')
 
 .. code-block:: ipython
 
-   In [1]: p + Minute(5)
+   In [1]: p + pd.offsets.Minute(5)
    Traceback
       ...
    ValueError: Input has different freq from Period(freq=H)
@@ -1861,11 +1860,11 @@ If ``Period`` has other frequencies, only the same ``offsets`` can be added. Oth
 .. ipython:: python
 
    p = pd.Period('2014-07', freq='M')
-   p + MonthEnd(3)
+   p + pd.offsets.MonthEnd(3)
 
 .. code-block:: ipython
 
-   In [1]: p + MonthBegin(3)
+   In [1]: p + pd.offsets.MonthBegin(3)
    Traceback
       ...
    ValueError: Input has different freq from Period(freq=M)
@@ -1923,11 +1922,11 @@ objects:
 
    idx = pd.period_range('2014-07-01 09:00', periods=5, freq='H')
    idx
-   idx + Hour(2)
+   idx + pd.offsets.Hour(2)
 
    idx = pd.period_range('2014-07', periods=5, freq='M')
    idx
-   idx + MonthEnd(3)
+   idx + pd.offsets.MonthEnd(3)
 
 ``PeriodIndex`` has its own dtype named ``period``, refer to :ref:`Period Dtypes <timeseries.period_dtype>`.
 
@@ -1987,9 +1986,9 @@ Passing a string representing a lower frequency than ``PeriodIndex`` returns par
 
    ps['2011']
 
-   dfp = pd.DataFrame(np.random.randn(600,1),
-                      columns=['A'],
-                      index=pd.period_range('2013-01-01 9:00', periods=600, freq='T'))
+   dfp = pd.DataFrame(
+       np.random.randn(600, 1), columns=['A'],
+       index=pd.period_range('2013-01-01 9:00', periods=600, freq='T'))
    dfp
    dfp['2013-01-01 10H']
 
@@ -2232,16 +2231,16 @@ tz-aware data to another time zone:
 
 .. warning::
 
-	Be wary of conversions between libraries. For some zones ``pytz`` and ``dateutil`` have different
-	definitions of the zone. This is more of a problem for unusual timezones than for
-	'standard' zones like ``US/Eastern``.
+   Be wary of conversions between libraries. For some zones ``pytz`` and ``dateutil`` have different
+   definitions of the zone. This is more of a problem for unusual timezones than for
+   'standard' zones like ``US/Eastern``.
 
 .. warning::
 
-       Be aware that a timezone definition across versions of timezone libraries may not
-       be considered equal.  This may cause problems when working with stored data that
-       is localized using one version and operated on with a different version.
-       See :ref:`here<io.hdf5-notes>` for how to handle such a situation.
+   Be aware that a timezone definition across versions of timezone libraries may not
+   be considered equal.  This may cause problems when working with stored data that
+   is localized using one version and operated on with a different version.
+   See :ref:`here<io.hdf5-notes>` for how to handle such a situation.
 
 .. warning::
 
@@ -2297,7 +2296,8 @@ To remove timezone from tz-aware ``DatetimeIndex``, use ``tz_localize(None)`` or
 
 .. ipython:: python
 
-   didx = pd.DatetimeIndex(start='2014-08-01 09:00', freq='H', periods=10, tz='US/Eastern')
+   didx = pd.DatetimeIndex(start='2014-08-01 09:00', freq='H',
+                           periods=10, tz='US/Eastern')
    didx
    didx.tz_localize(None)
    didx.tz_convert(None)
@@ -2350,7 +2350,8 @@ constructor as well as ``tz_localize``.
    rng_hourly.tz_localize('US/Eastern', ambiguous=rng_hourly_dst).tolist()
    rng_hourly.tz_localize('US/Eastern', ambiguous='NaT').tolist()
 
-   didx = pd.DatetimeIndex(start='2014-08-01 09:00', freq='H', periods=10, tz='US/Eastern')
+   didx = pd.DatetimeIndex(start='2014-08-01 09:00', freq='H',
+                           periods=10, tz='US/Eastern')
    didx
    didx.tz_localize(None)
    didx.tz_convert(None)
@@ -2399,14 +2400,14 @@ TZ Aware Dtypes
 
 .. ipython:: python
 
-   s_naive = pd.Series(pd.date_range('20130101',periods=3))
+   s_naive = pd.Series(pd.date_range('20130101', periods=3))
    s_naive
 
 ``Series/DatetimeIndex`` with a timezone **aware** value are represented with a dtype of ``datetime64[ns, tz]``.
 
 .. ipython:: python
 
-   s_aware = pd.Series(pd.date_range('20130101',periods=3,tz='US/Eastern'))
+   s_aware = pd.Series(pd.date_range('20130101', periods=3, tz='US/Eastern'))
    s_aware
 
 Both of these ``Series`` can be manipulated via the ``.dt`` accessor, see :ref:`here <basics.dt_accessors>`.
