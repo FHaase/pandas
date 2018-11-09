@@ -4,13 +4,12 @@
 .. ipython:: python
    :suppress:
 
-   from datetime import datetime, timedelta, time
-   import numpy as np
-   import pandas as pd
+   from datetime import datetime, timedelta, time  # noqa: F401
+   import numpy as np  # noqa: F401
+   import pandas as pd  # noqa: F401
 
-   import dateutil
-   import pytz
-   from dateutil.relativedelta import relativedelta
+   import dateutil  # noqa: F401
+   import pytz  # noqa: F401
 
    np.random.seed(123456)
    np.set_printoptions(precision=4, suppress=True)
@@ -871,7 +870,7 @@ The basic ``DateOffset`` takes the same arguments as
 .. ipython:: python
 
    d = datetime(2008, 8, 18, 9, 0)
-   d + relativedelta(months=4, days=5)
+   d + dateutil.relativedelta(months=4, days=5)
 
 We could have done the same thing with ``DateOffset``:
 
@@ -1419,7 +1418,7 @@ An example of how holidays and holiday calendars are defined:
 
 .. ipython:: python
 
-    from pandas.tseries.holiday import Holiday, USMemorialDay,\
+    from pandas.tseries.holiday import Holiday, USMemorialDay, \
         AbstractHolidayCalendar, nearest_workday, MO
 
     class ExampleCalendar(AbstractHolidayCalendar):
@@ -1476,7 +1475,7 @@ or calendars with additional rules.
 
 .. ipython:: python
 
-    from pandas.tseries.holiday import get_calendar, HolidayCalendarFactory,\
+    from pandas.tseries.holiday import get_calendar, HolidayCalendarFactory, \
         USLaborDay
     cal = get_calendar('ExampleCalendar')
     cal.rules
