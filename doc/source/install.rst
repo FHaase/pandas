@@ -205,7 +205,7 @@ installed), make sure you have `pytest
 <http://docs.pytest.org/en/latest/>`__ >= 3.6 and `Hypothesis
 <https://hypothesis.readthedocs.io/>`__ >= 3.58, then run:
 
-::
+.. code-block:: ipython
 
     >>> import pandas as pd
     >>> pd.test()
