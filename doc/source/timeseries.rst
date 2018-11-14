@@ -4,12 +4,13 @@
 .. ipython:: python
    :suppress:
 
-   from datetime import datetime, timedelta, time  # noqa: F401
-   import numpy as np  # noqa: F401
-   import pandas as pd  # noqa: F401
+   from datetime import datetime, timedelta, time
+   import numpy as np  # noqa: F811
+   import pandas as pd  # noqa: F811
 
-   import dateutil  # noqa: F401
-   import pytz  # noqa: F401
+   import functools
+   import dateutil
+   import pytz
 
    np.random.seed(123456)
    np.set_printoptions(precision=4, suppress=True)
@@ -893,7 +894,7 @@ custom date increment logic, such as adding business days:
 
 .. code-block:: python
 
-    class BDay(DateOffset):
+    class BDay(pd.DateOffset):
         """DateOffset increments between business days"""
         def apply(self, other):
             ...
@@ -1064,7 +1065,7 @@ Holiday calendars can be used to provide the list of holidays.  See the
 
 .. ipython:: python
 
-    from pandas.tseries.holiday import USFederalHolidayCalendar
+    from pandas.tseries.holiday import USFederalHolidayCalendar    # noqa: E402
 
     bday_us = pd.offsets.CustomBusinessDay(calendar=USFederalHolidayCalendar())
 
@@ -1212,7 +1213,7 @@ as ``BusinessHour`` except that it skips specified custom holidays.
 
 .. ipython:: python
 
-    from pandas.tseries.holiday import USFederalHolidayCalendar
+    from pandas.tseries.holiday import USFederalHolidayCalendar    # noqa: E402
     bhour_us = pd.offsets.CustomBusinessHour(calendar=USFederalHolidayCalendar())
     # Friday before MLK Day
     dt = datetime(2014, 1, 17, 15)
@@ -1418,8 +1419,9 @@ An example of how holidays and holiday calendars are defined:
 
 .. ipython:: python
 
-    from pandas.tseries.holiday import Holiday, USMemorialDay, \
-        AbstractHolidayCalendar, nearest_workday, MO
+    from pandas.tseries.holiday import Holiday, USMemorialDay, MO  # noqa: E402
+    from pandas.tseries.holiday import AbstractHolidayCalendar     # noqa: E402
+    from pandas.tseries.holiday import nearest_workday             # noqa: E402
 
     class ExampleCalendar(AbstractHolidayCalendar):
         rules = [
@@ -1475,8 +1477,8 @@ or calendars with additional rules.
 
 .. ipython:: python
 
-    from pandas.tseries.holiday import get_calendar, HolidayCalendarFactory, \
-        USLaborDay
+    from pandas.tseries.holiday import get_calendar, USLaborDay    # noqa: E402
+    from pandas.tseries.holiday import HolidayCalendarFactory      # noqa: E402
     cal = get_calendar('ExampleCalendar')
     cal.rules
     new_cal = HolidayCalendarFactory('NewExampleCalendar', cal, USLaborDay)
@@ -1848,6 +1850,7 @@ If ``Period`` freq is daily or higher (``D``, ``H``, ``T``, ``S``, ``L``, ``U``,
    p + np.timedelta64(7200, 's')
 
 .. code-block:: ipython
+   :flake8-group: ipython
 
    In [1]: p + pd.offsets.Minute(5)
    Traceback
@@ -1862,6 +1865,7 @@ If ``Period`` has other frequencies, only the same ``offsets`` can be added. Oth
    p + pd.offsets.MonthEnd(3)
 
 .. code-block:: ipython
+   :flake8-group: ipython
 
    In [1]: p + pd.offsets.MonthBegin(3)
    Traceback
@@ -2324,6 +2328,7 @@ contains ambiguous times and the bottom will infer the right offset.
 This will fail as there are ambiguous times
 
 .. code-block:: ipython
+   :flake8-group: ipython
 
    In [2]: rng_hourly.tz_localize('US/Eastern')
    AmbiguousTimeError: Cannot infer dst time from Timestamp('2011-11-06 01:00:00'), try using the 'ambiguous' argument
@@ -2379,6 +2384,7 @@ can be controlled by the ``nonexistent`` argument. The following options are ava
 Localization of nonexistent times will raise an error by default.
 
 .. code-block:: ipython
+   :flake8-group: ipython
 
    In [2]: dti.tz_localize('Europe/Warsaw')
    NonExistentTimeError: 2015-03-29 02:30:00

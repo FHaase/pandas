@@ -8,8 +8,8 @@ Frequently Asked Questions (FAQ)
 .. ipython:: python
    :suppress:
 
-   import numpy as np
-   import pandas as pd
+   import numpy as np  # noqa: F811
+   import pandas as pd  # noqa: F811
 
    np.random.seed(123456)
    np.set_printoptions(precision=4, suppress=True)

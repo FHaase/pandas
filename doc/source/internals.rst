@@ -5,10 +5,11 @@
 .. ipython:: python
    :suppress:
 
-   import numpy as np
+   import numpy as np  # noqa: F811
+   import pandas as pd  # noqa: F811
+
    np.random.seed(123456)
    np.set_printoptions(precision=4, suppress=True)
-   import pandas as pd
    pd.options.display.max_rows = 15
 
 *********
@@ -77,7 +78,8 @@ integer **labels**, and the level **names**:
 
 .. ipython:: python
 
-   index = pd.MultiIndex.from_product([range(3), ['one', 'two']], names=['first', 'second'])
+   index = pd.MultiIndex.from_product([range(3), ['one', 'two']],
+                                      names=['first', 'second'])
    index
    index.levels
    index.labels

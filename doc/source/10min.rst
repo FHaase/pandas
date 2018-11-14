@@ -5,9 +5,9 @@
 .. ipython:: python
    :suppress:
 
-   import numpy as np
-   import pandas as pd
-   import os                         # noqa: F401
+   import numpy as np  # noqa: F811
+   import pandas as pd  # noqa: F811
+   import os
 
    np.random.seed(123456)
    np.set_printoptions(precision=4, suppress=True)
@@ -29,9 +29,11 @@ You can see more complex recipes in the :ref:`Cookbook<cookbook>`.
 Customarily, we import as follows:
 
 .. ipython:: python
+   :flake8-group: None
+   :flake8-set-ignore: F811, F401
 
-   import pandas as pd           # noqa: F401
-   import numpy as np            # noqa: F401
+   import numpy as np
+   import pandas as pd
 
 Object Creation
 ---------------
@@ -696,6 +698,7 @@ Plotting
 See the :ref:`Plotting <visualization>` docs.
 
 .. ipython:: python
+   :flake8-group: None
    :suppress:
 
    import matplotlib.pyplot as plt
@@ -720,7 +723,7 @@ of the columns with labels:
    df = df.cumsum()
 
    @savefig frame_plot_basic.png
-   plt.figure(); df.plot(); plt.legend(loc='best')  # noqa: E702
+   plt.figure(); df.plot(); plt.legend(loc='best')                 # noqa: E702
 
 Getting Data In/Out
 -------------------
